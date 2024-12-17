@@ -1,0 +1,33 @@
+// prisma/schema.prisma
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  wallets   Wallet[]
+}
+
+model Wallet {
+  id          Int           @id @default(autoincrement())
+  userId      Int
+  balance     Float         @default(0)
+  user        User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
+}
+
+model Transaction {
+  id        Int    @id @default(autoincrement())
+  walletId  Int
+  type      String
+  amount    Float
+  category  String
+  wallet    Wallet @relation(fields: [walletId], references: [id])
+}
